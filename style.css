@@ -356,10 +356,23 @@ a {
 }
 
 /* --- Map --- */
+.venue-bg {
+  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+              url('estate-venue.webp') center/cover no-repeat;
+}
+
+.venue-bg .section-title {
+  color: var(--white);
+}
+
+.venue-bg .detail-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+}
+
 .map-section {
   padding: 4rem 20px;
-  background: linear-gradient(rgba(250, 248, 245, 0.88), rgba(250, 248, 245, 0.88)),
-              url('estate-venue.webp') center/cover no-repeat;
+  background-color: var(--ivory);
   text-align: center;
 }
 
