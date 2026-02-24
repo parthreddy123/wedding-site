@@ -13,7 +13,7 @@
 const WEDDING_DATE = new Date('2026-05-09T18:00:00');
 
 // Replace with your Google Apps Script web app URL after deployment
-const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMkSUgYvyYWkKIP0KHFVyd7k3FfHsBAnN3xICclgionleE4RgcFQ898dgCa5n41FQo/exec';
 
 
 // ======================
