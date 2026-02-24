@@ -508,6 +508,37 @@ a {
   color: #c0392b;
 }
 
+/* --- Breast Cancer Research CTA --- */
+.bcr-section {
+  padding: 3rem 20px;
+  text-align: center;
+  background-color: var(--cream);
+  border-top: 1px solid var(--sage-light);
+}
+
+.bcr-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--text-medium);
+  margin-bottom: 0.8rem;
+}
+
+.bcr-link {
+  display: inline-block;
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #d4639a;
+  transition: color 0.3s ease;
+}
+
+.bcr-link:hover {
+  color: #b84e82;
+}
+
 /* --- Footer --- */
 .footer {
   padding: 3rem 20px;
