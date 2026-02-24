@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parth & Emily — We're Getting Married!</title>
+  <meta name="description" content="Join us to celebrate the wedding of Parth and Emily on May 9, 2026.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <ul class="nav-list">
+      <li><a href="#ceremony" class="nav-link">Ceremony</a></li>
+      <li><a href="#reception" class="nav-link">Reception</a></li>
+      <li><a href="#rsvp" class="nav-link">RSVP</a></li>
+      <li><a href="travel.html" class="nav-link">Travel Guide</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero / Header -->
+  <header class="hero" id="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-subtitle">Together with their families</p>
+      <h1 class="hero-title">
+        <span class="name">Parth</span>
+        <span class="ampersand">&amp;</span>
+        <span class="name">Emily</span>
+      </h1>
+      <p class="hero-date">Saturday, May 9, 2026</p>
+      <p class="hero-tagline">Request the pleasure of your company</p>
+      <a href="#rsvp" class="hero-cta">RSVP Now</a>
+    </div>
+  </header>
+
+  <!-- Countdown Timer -->
+  <section class="countdown-section" id="countdown">
+    <h2 class="section-title">Counting Down</h2>
+    <div class="countdown" id="countdown-timer">
+      <div class="countdown-unit">
+        <span class="countdown-number" id="cd-days">--</span>
+        <span class="countdown-label">Days</span>
+      </div>
+      <div class="countdown-unit">
+        <span class="countdown-number" id="cd-hours">--</span>
+        <span class="countdown-label">Hours</span>
+      </div>
+      <div class="countdown-unit">
+        <span class="countdown-number" id="cd-minutes">--</span>
+        <span class="countdown-label">Minutes</span>
+      </div>
+      <div class="countdown-unit">
+        <span class="countdown-number" id="cd-seconds">--</span>
+        <span class="countdown-label">Seconds</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ceremony Details -->
+  <section class="details-section" id="ceremony">
+    <div class="container">
+      <h2 class="section-title">The Ceremony</h2>
+      <div class="detail-card">
+        <div class="detail-icon">&#9829;</div>
+        <p class="detail-date">Saturday, May 9, 2026</p>
+        <p class="detail-time">6:00 PM</p>
+        <p class="detail-venue">The Estate on Federal Hill</p>
+        <p class="detail-address">333, Jalan Damansara, Bukit Damansara<br>50490 Kuala Lumpur, Malaysia</p>
+        <p class="detail-note">
+          Please arrive 15 minutes early. The ceremony will be held outdoors
+          in the garden; please dress accordingly.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reception Details -->
+  <section class="details-section details-alt" id="reception">
+    <div class="container">
+      <h2 class="section-title">The Reception</h2>
+      <div class="detail-card">
+        <div class="detail-icon">&#127870;</div>
+        <p class="detail-date">Saturday, May 9, 2026</p>
+        <p class="detail-time">6:30 PM</p>
+        <p class="detail-venue">The Estate on Federal Hill</p>
+        <p class="detail-address">333, Jalan Damansara, Bukit Damansara<br>50490 Kuala Lumpur, Malaysia</p>
+        <p class="detail-note">
+          Dinner, drinks, dancing, and celebration! Cocktail attire suggested.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Embed -->
+  <section class="map-section" id="map">
+    <div class="container">
+      <h2 class="section-title">Find Us Here</h2>
+      <div class="map-wrapper">
+        <!-- Replace the src below with your own Google Maps embed URL -->
+        <iframe
+          class="map-iframe"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3983.786!2d101.6685!3d3.1480!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6c3c4930d09319e1%3A0xe512fb7fd58b61d7!2sThe%20Estate%20on%20Federal%20Hill!5e0!3m2!1sen!2smy!4v1700000000000!5m2!1sen!2smy"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Venue Location">
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- RSVP Form -->
+  <section class="rsvp-section" id="rsvp">
+    <div class="container">
+      <h2 class="section-title">RSVP</h2>
+      <p class="rsvp-subtitle">Kindly respond by [RSVP Deadline Date]</p>
+
+      <form class="rsvp-form" id="rsvp-form" novalidate>
+        <div class="form-group">
+          <label for="name">Full Name <span class="required">*</span></label>
+          <input type="text" id="name" name="name" required placeholder="Your full name">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email <span class="required">*</span></label>
+          <input type="email" id="email" name="email" required placeholder="your@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="guests">Number of Guests <span class="required">*</span></label>
+          <select id="guests" name="guests" required>
+            <option value="">Select</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5+</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Will you attend? <span class="required">*</span></label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="attendance" value="yes" required>
+              <span class="radio-text">Joyfully Accepts</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="attendance" value="no" required>
+              <span class="radio-text">Respectfully Declines</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="dietary">Dietary Restrictions</label>
+          <input type="text" id="dietary" name="dietary" placeholder="e.g., Vegetarian, Gluten-free, Nut allergy">
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message for the Couple</label>
+          <textarea id="message" name="message" rows="4" placeholder="Share your well-wishes..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btn-submit">Send RSVP</button>
+        <div class="form-status" id="form-status"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p class="footer-names">Parth &amp; Emily</p>
+    <p class="footer-date">Saturday, May 9, 2026</p>
+    <p class="footer-contact">Questions? Email <a href="mailto:parth.reddy@live.com">parth.reddy@live.com</a> or <a href="https://wa.me/31638641694">WhatsApp +31 6 3864 1694</a></p>
+    <p class="footer-copy">&copy; 2026 — Made with love</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
