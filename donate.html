@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donate — Parth & Emily's Wedding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .donate-hero {
+      padding: 7rem 20px 3rem;
+      text-align: center;
+      background: linear-gradient(135deg, var(--sage-light) 0%, var(--cream) 50%, var(--sage-light) 100%);
+    }
+
+    .donate-hero-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 2.4rem;
+      color: var(--sage-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .donate-hero-sub {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: var(--text-medium);
+    }
+
+    .donate-section {
+      padding: 3.5rem 20px;
+      background-color: var(--ivory);
+    }
+
+    .donate-card {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--white);
+      border: 1px solid var(--sage-light);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+
+    .donate-ribbon {
+      display: inline-block;
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .donate-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 1.4rem;
+      color: var(--text-dark);
+      margin-bottom: 1rem;
+    }
+
+    .donate-card p {
+      font-size: 1rem;
+      color: var(--text-medium);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .donate-card p:last-of-type {
+      margin-bottom: 2rem;
+    }
+
+    .donate-btn {
+      display: inline-block;
+      padding: 1rem 3rem;
+      font-family: 'Lato', sans-serif;
+      font-weight: 400;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--white);
+      background-color: #d4639a;
+      border-radius: 50px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .donate-btn:hover {
+      background-color: #b84e82;
+      color: var(--white);
+      transform: translateY(-1px);
+    }
+
+    .donate-note {
+      max-width: 600px;
+      margin: 2rem auto 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    .bcrf-logo-text {
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    @media (min-width: 768px) {
+      .donate-hero {
+        padding: 8rem 20px 4rem;
+      }
+
+      .donate-hero-title {
+        font-size: 3rem;
+      }
+
+      .donate-section {
+        padding: 5rem 20px;
+      }
+
+      .donate-card {
+        padding: 3rem 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <ul class="nav-list">
+      <li><a href="index.html" class="nav-link">Wedding</a></li>
+      <li><a href="travel.html" class="nav-link">Travel Guide</a></li>
+      <li><a href="donate.html" class="nav-link">Donate</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <header class="donate-hero">
+    <div class="container">
+      <h1 class="donate-hero-title">In Lieu of Gifts</h1>
+      <p class="donate-hero-sub">Help us support a cause close to our hearts</p>
+    </div>
+  </header>
+
+  <!-- Donate Section -->
+  <section class="donate-section">
+    <div class="container">
+      <div class="donate-card">
+        <div class="donate-ribbon">&#127808;</div>
+        <h3>Donate to Breast Cancer Research</h3>
+        <p>Your presence at our wedding is the greatest gift we could ask for. If you wish to honour us further, we would be deeply grateful for a donation to the <span class="bcrf-logo-text">Breast Cancer Research Foundation (BCRF)</span>.</p>
+        <p>BCRF is the largest private funder of breast cancer research worldwide, supporting over 260 scientists across 17 countries. Every donation helps advance life-saving research and brings us closer to a cure.</p>
+        <a href="https://give.bcrf.org/campaign/584695/donate" target="_blank" rel="noopener noreferrer" class="donate-btn">Donate to BCRF</a>
+      </div>
+      <p class="donate-note">Of course, your love and presence mean the world to us — no gift or donation is ever expected.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p class="footer-names">Parth &amp; Emily</p>
+    <p class="footer-date">Saturday, May 9, 2026</p>
+    <p class="footer-contact">Questions? Email <a href="mailto:parth.reddy@live.com">parth.reddy@live.com</a> or <a href="https://wa.me/31638641694">WhatsApp +31 6 3864 1694</a></p>
+    <p class="footer-copy">&copy; 2026 — Made with love</p>
+  </footer>
+
+  <script>
+    var nav = document.getElementById('nav');
+    window.addEventListener('scroll', function () {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+  </script>
+</body>
+</html>
