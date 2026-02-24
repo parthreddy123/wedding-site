@@ -237,8 +237,13 @@ a {
 /* --- Countdown --- */
 .countdown-section {
   padding: 3.5rem 20px;
-  background-color: var(--white);
+  background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+              url('estate-venue.webp') center/cover no-repeat;
   text-align: center;
+}
+
+.countdown-section .section-title {
+  color: var(--white);
 }
 
 .countdown {
@@ -254,9 +259,10 @@ a {
   align-items: center;
   min-width: 70px;
   padding: 1rem 0.8rem;
-  background: var(--cream);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(6px);
   border-radius: 12px;
-  border: 1px solid var(--sage-light);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .countdown-number {
@@ -357,17 +363,7 @@ a {
 
 /* --- Map --- */
 .venue-bg {
-  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-              url('estate-night.jpg') center/cover no-repeat;
-}
-
-.venue-bg .section-title {
-  color: var(--white);
-}
-
-.venue-bg .detail-card {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(6px);
+  background-color: var(--ivory);
 }
 
 .map-section {
