@@ -325,6 +325,18 @@ a {
   margin-bottom: 0.25rem;
 }
 
+.detail-venue a {
+  color: var(--sage-dark);
+  text-decoration: underline;
+  text-decoration-color: var(--gold-light);
+  text-underline-offset: 3px;
+  transition: color 0.3s ease;
+}
+
+.detail-venue a:hover {
+  color: var(--gold);
+}
+
 .detail-address {
   font-size: 0.95rem;
   color: var(--text-medium);
@@ -344,7 +356,8 @@ a {
 /* --- Map --- */
 .map-section {
   padding: 4rem 20px;
-  background-color: var(--ivory);
+  background: linear-gradient(rgba(250, 248, 245, 0.88), rgba(250, 248, 245, 0.88)),
+              url('estate-venue.webp') center/cover no-repeat;
   text-align: center;
 }
 
