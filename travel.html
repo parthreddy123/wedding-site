@@ -39,56 +39,44 @@
       <div class="hotel-grid">
 
         <div class="hotel-card">
-          <div class="hotel-badge luxury">Luxury</div>
           <h3 class="hotel-name">The St. Regis Kuala Lumpur</h3>
           <p class="hotel-area">KL Sentral &middot; ~1.5 km from venue</p>
           <p class="hotel-desc">Ultra-luxury hotel with butler service and a lavish spa — one of the finest addresses in KL.</p>
-          <p class="hotel-price">From ~$220/night</p>
         </div>
 
         <div class="hotel-card">
-          <div class="hotel-badge luxury">Luxury</div>
           <h3 class="hotel-name">Sofitel Kuala Lumpur Damansara</h3>
           <p class="hotel-area">Damansara Heights &middot; ~1.7 km from venue</p>
           <p class="hotel-desc">French-accented 5-star hotel with a Turkish hammam spa — the nearest quality hotel to the venue.</p>
-          <p class="hotel-price">From ~$80/night</p>
         </div>
 
         <div class="hotel-card">
-          <div class="hotel-badge mid">Mid-Range</div>
           <h3 class="hotel-name">Le Meridien Kuala Lumpur</h3>
           <p class="hotel-area">KL Sentral &middot; ~1.4 km from venue</p>
           <p class="hotel-desc">Polished 5-star hotel connected to KL Sentral transport hub with excellent on-site dining.</p>
-          <p class="hotel-price">From ~$95/night</p>
         </div>
 
         <div class="hotel-card">
-          <div class="hotel-badge mid">Mid-Range</div>
           <h3 class="hotel-name">Hilton Kuala Lumpur</h3>
           <p class="hotel-area">KL Sentral &middot; next to transit hub</p>
           <p class="hotel-desc">Award-winning hotel with a rooftop pool and direct 28-minute train to KLIA airport.</p>
-          <p class="hotel-price">From ~$90/night</p>
         </div>
 
         <div class="hotel-card">
-          <div class="hotel-badge mid">Lifestyle</div>
           <h3 class="hotel-name">Aloft Kuala Lumpur Sentral</h3>
           <p class="hotel-area">Brickfields / KL Sentral</p>
           <p class="hotel-desc">Trendy, design-forward hotel with a lively lobby bar, rooftop pool, and a younger vibe.</p>
-          <p class="hotel-price">From ~$70/night</p>
         </div>
 
         <div class="hotel-card">
-          <div class="hotel-badge budget">Budget</div>
           <h3 class="hotel-name">Hilton Garden Inn KL</h3>
           <p class="hotel-area">Chow Kit &middot; ~3-4 km from venue</p>
           <p class="hotel-desc">Clean, reliable, no-frills hotel from a trusted brand — close to monorail and bus stops.</p>
-          <p class="hotel-price">From ~$36/night</p>
         </div>
 
       </div>
 
-      <p class="travel-note">All prices in USD and approximate. A tourist tax of RM 10 (~$2) per room per night applies for foreign guests.</p>
+      <p class="travel-note">Rates range from roughly ~$35–220 USD/night depending on the hotel. A tourist tax of RM 10 (~$2) per room per night applies for foreign guests.</p>
     </div>
   </section>
 
@@ -225,7 +213,7 @@
         <div class="tip-card">
           <div class="tip-icon">&#128176;</div>
           <h4>Currency</h4>
-          <p>Malaysian Ringgit (MYR/RM). Roughly RM 4.5 = $1 USD. Cards are widely accepted; ATMs everywhere.</p>
+          <p>Malaysian Ringgit (MYR/RM). Roughly <span id="exchange-rate">RM 3.9</span> = $1 USD. Cards are widely accepted; ATMs everywhere.</p>
         </div>
         <div class="tip-card">
           <div class="tip-icon">&#128717;</div>
@@ -263,6 +251,19 @@
         }
       });
     });
+
+    // Fetch live MYR/USD exchange rate
+    fetch('https://open.er-api.com/v6/latest/USD')
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.rates && data.rates.MYR) {
+          var rate = data.rates.MYR.toFixed(1);
+          document.getElementById('exchange-rate').textContent = 'RM ' + rate;
+        }
+      })
+      .catch(function () {
+        // Keep the fallback static value
+      });
   </script>
 </body>
 </html>
