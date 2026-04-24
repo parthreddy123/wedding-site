@@ -346,6 +346,41 @@ a {
   margin-bottom: 1rem;
 }
 
+.agenda {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  text-align: left;
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.agenda li {
+  display: flex;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--sage-light);
+  font-size: 0.95rem;
+}
+
+.agenda li:last-child {
+  border-bottom: none;
+}
+
+.agenda-time {
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  color: var(--sage-dark);
+  white-space: nowrap;
+  min-width: 70px;
+}
+
+.agenda-desc {
+  color: var(--text-medium);
+}
+
 .detail-note {
   font-size: 0.9rem;
   font-style: italic;
