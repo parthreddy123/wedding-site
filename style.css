@@ -14,13 +14,13 @@
 }
 
 :root {
-  --sage: #8faa8b;
-  --sage-dark: #6b8a66;
-  --sage-light: #c5d6c3;
-  --ivory: #faf8f5;
-  --cream: #f5f0e8;
-  --gold: #b8976a;
-  --gold-light: #d4be96;
+  --sage: #c5b8e8;
+  --sage-dark: #9b8ec4;
+  --sage-light: #e8e0f5;
+  --ivory: #fdfaf7;
+  --cream: #f8f0e3;
+  --gold: #c9a96e;
+  --gold-light: #dfc99a;
   --text-dark: #3a3a3a;
   --text-medium: #5c5c5c;
   --text-light: #8a8a8a;
@@ -96,7 +96,7 @@ a {
   left: 0;
   width: 100%;
   z-index: 100;
-  background: rgba(250, 248, 245, 0.95);
+  background: rgba(253, 250, 247, 0.95);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--sage-light);
   transition: box-shadow 0.3s ease;
@@ -150,7 +150,7 @@ a {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(ellipse at 30% 50%, rgba(184, 151, 106, 0.08) 0%, transparent 60%),
+  background: radial-gradient(ellipse at 30% 50%, rgba(197, 184, 232, 0.12) 0%, transparent 60%),
               radial-gradient(ellipse at 70% 50%, rgba(143, 170, 139, 0.1) 0%, transparent 60%);
   animation: heroShimmer 15s ease-in-out infinite alternate;
 }
