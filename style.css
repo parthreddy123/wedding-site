@@ -561,6 +561,57 @@ a {
   color: #c0392b;
 }
 
+/* --- Gallery Preview --- */
+.gallery-preview-section {
+  padding: 2.5rem 20px;
+  background: var(--ivory);
+  text-align: center;
+}
+.gallery-preview-strip {
+  display: flex;
+  gap: 8px;
+  max-width: 860px;
+  margin: 0 auto 1.2rem;
+  height: 240px;
+}
+.preview-img-wrap {
+  flex: 1;
+  overflow: hidden;
+  border-radius: 4px;
+  display: block;
+}
+.preview-img-wrap.preview-featured {
+  flex: 1.6;
+}
+.preview-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform 0.4s ease, opacity 0.3s ease;
+}
+.preview-img-wrap:hover img {
+  transform: scale(1.03);
+  opacity: 0.9;
+}
+.gallery-preview-link {
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  color: var(--sage-dark);
+  text-decoration: none;
+}
+.gallery-preview-link:hover {
+  color: var(--gold);
+}
+@media (max-width: 480px) {
+  .gallery-preview-strip {
+    height: 160px;
+  }
+}
+
 /* --- Breast Cancer Research CTA --- */
 .bcr-section {
   padding: 3rem 20px;
@@ -575,6 +626,16 @@ a {
   font-size: 1.1rem;
   color: var(--text-medium);
   margin-bottom: 0.8rem;
+}
+
+.bcr-body {
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--text-medium);
+  max-width: 560px;
+  margin: 0 auto 1.2rem;
+  line-height: 1.7;
 }
 
 .bcr-link {
