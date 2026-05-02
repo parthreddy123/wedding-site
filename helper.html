@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Helper — Emily &amp; Parth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+<!-- ── PIN Overlay ── -->
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-box">
+    <p class="pin-names">Emily &amp; Parth</p>
+    <h1 class="pin-title">Helper Access</h1>
+    <p class="pin-hint">Enter your access code</p>
+    <input type="password" inputmode="numeric" maxlength="6"
+      class="pin-input" id="pinInput" autocomplete="off" placeholder="••••">
+    <button class="btn-submit" onclick="checkPin()">Enter</button>
+    <p class="pin-error" id="pinError"></p>
+  </div>
+</div>
+
+<!-- ── Helper Page ── -->
+<div id="helperPage" style="display:none;">
+
+  <nav class="admin-nav">
+    <span class="admin-nav-title">Emily &amp; Parth · 9 May 2026</span>
+    <span class="live-dot" id="liveDot">&#9679; Live</span>
+  </nav>
+
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
+    <button class="admin-tab" data-tab="checkin"  onclick="switchTab('checkin')">Check In</button>
+    <button class="admin-tab" data-tab="gift"     onclick="switchTab('gift')">Add Gift</button>
+  </div>
+
+  <!-- ── Tab: Overview ── -->
+  <div class="admin-panel" id="panel-overview">
+
+    <div class="headcount-card" id="headcountCard">
+      <div class="headcount-number" id="headcountNum">—</div>
+      <div class="headcount-label">guests arrived</div>
+      <div class="headcount-sub" id="headcountSub">of — total</div>
+    </div>
+
+    <div class="admin-toolbar">
+      <div class="filter-group">
+        <button class="filter-btn active" data-f="all"     onclick="setGuestFilter('all')">All</button>
+        <button class="filter-btn"        data-f="arrived" onclick="setGuestFilter('arrived')">Arrived</button>
+        <button class="filter-btn"        data-f="pending" onclick="setGuestFilter('pending')">Not yet</button>
+      </div>
+    </div>
+
+    <div class="search-wrap" style="margin-bottom:1rem;">
+      <input type="text" class="search-input" id="overviewSearch"
+        placeholder="Search name or table…" oninput="renderGuestList()"
+        autocomplete="off" autocorrect="off">
+      <span class="search-icon">&#9906;</span>
+    </div>
+
+    <div id="overviewList"><p class="empty-state">Loading…</p></div>
+  </div>
+
+  <!-- ── Tab: Check In ── -->
+  <div class="admin-panel" id="panel-checkin" style="display:none;">
+
+    <div class="search-wrap" style="margin-bottom:1.2rem;">
+      <input type="text" class="search-input" id="checkinSearch"
+        placeholder="Search guest name…" oninput="searchForCheckin()"
+        autocomplete="off" autocorrect="off" autocapitalize="words">
+      <span class="search-icon">&#9906;</span>
+    </div>
+
+    <div id="checkinResults"></div>
+
+    <!-- Success screen -->
+    <div id="checkinSuccess" style="display:none;" class="checkin-success">
+      <div class="checkin-tick">&#10003;</div>
+      <div class="checkin-success-name"  id="csName"></div>
+      <div class="checkin-success-table" id="csTable"></div>
+      <div class="checkin-success-lang"  id="csLang"></div>
+      <button class="btn-submit" style="max-width:200px; margin:1.5rem auto 0;"
+        onclick="resetCheckin()">Next Guest</button>
+    </div>
+
+  </div>
+
+  <!-- ── Tab: Add Gift ── -->
+  <div class="admin-panel" id="panel-gift" style="display:none;">
+    <div class="admin-card">
+      <h3 class="admin-card-title">Add Gift / Angpau</h3>
+      <form id="giftForm" onsubmit="submitGift(event)" autocomplete="off">
+
+        <div class="form-group">
+          <label for="hName">Giver's Name <span class="required">*</span></label>
+          <input type="text" id="hName" placeholder="e.g. Uncle David Lim" required>
+        </div>
+
+        <div class="form-group">
+          <label>Type <span class="required">*</span></label>
+          <div class="toggle-group" id="hTypeToggle">
+            <button type="button" class="toggle-btn active" data-val="angpau"
+              onclick="setGiftType('angpau')">Angpau / Cash</button>
+            <button type="button" class="toggle-btn" data-val="gift"
+              onclick="setGiftType('gift')">Physical Gift</button>
+          </div>
+        </div>
+
+        <div id="hDescField" style="display:none;">
+          <div class="form-group">
+            <label for="hDesc">Description</label>
+            <input type="text" id="hDesc" placeholder="e.g. Crystal vase">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>From</label>
+          <div class="toggle-group" id="hSideToggle">
+            <button type="button" class="toggle-btn active" data-val="bride"
+              onclick="setGiftSide('bride')">Bride's side</button>
+            <button type="button" class="toggle-btn" data-val="groom"
+              onclick="setGiftSide('groom')">Groom's side</button>
+            <button type="button" class="toggle-btn" data-val="both"
+              onclick="setGiftSide('both')">Both</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="hNotes">Notes <span class="optional">(optional)</span></label>
+          <input type="text" id="hNotes" placeholder="Any extra notes">
+        </div>
+
+        <button type="submit" class="btn-submit" id="hSubmitBtn">Save</button>
+        <p class="form-status" id="hStatus"></p>
+
+      </form>
+    </div>
+  </div>
+
+</div><!-- /helperPage -->
+
+<script src="supabase-config.js"></script>
+<script>
+  let allGuests       = [];
+  let guestFilter     = 'all';
+  let giftType        = 'angpau';
+  let giftSide        = 'bride';
+  let checkinTimer;
+
+  // ── PIN ───────────────────────────────────────────────────────────────────
+  function checkPin() {
+    if (document.getElementById('pinInput').value.trim() === ENTRY_PIN) {
+      document.getElementById('pinOverlay').style.display = 'none';
+      document.getElementById('helperPage').style.display = 'block';
+      loadGuests();
+      subscribeRealtime();
+    } else {
+      const err = document.getElementById('pinError');
+      err.textContent = 'Incorrect code — try again.';
+      document.getElementById('pinInput').value = '';
+      setTimeout(() => { err.textContent = ''; }, 2500);
+    }
+  }
+
+  document.getElementById('pinInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPin();
+  });
+
+  // ── Realtime ──────────────────────────────────────────────────────────────
+  function subscribeRealtime() {
+    sb.channel('helper-guests')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'guests' }, loadGuests)
+      .subscribe(s => {
+        document.getElementById('liveDot').style.color =
+          s === 'SUBSCRIBED' ? '#4caf50' : '#bbb';
+      });
+  }
+
+  // ── Data ──────────────────────────────────────────────────────────────────
+  async function loadGuests() {
+    const { data } = await sb.from('guests').select('*').order('name');
+    allGuests = data || [];
+    updateHeadcount();
+    renderGuestList();
+    // refresh check-in results if search is active
+    const q = document.getElementById('checkinSearch').value.trim();
+    if (q.length >= 2) renderCheckinResults(q);
+  }
+
+  // ── Headcount ─────────────────────────────────────────────────────────────
+  function updateHeadcount() {
+    const arrived = allGuests.filter(g => g.checked_in).length;
+    document.getElementById('headcountNum').textContent = arrived;
+    document.getElementById('headcountSub').textContent = `of ${allGuests.length} total`;
+    document.getElementById('headcountCard').className =
+      'headcount-card' + (arrived === allGuests.length && allGuests.length > 0 ? ' headcount-card--full' : '');
+  }
+
+  // ── Guest list (Overview tab) ─────────────────────────────────────────────
+  function setGuestFilter(f) {
+    guestFilter = f;
+    document.querySelectorAll('#panel-overview .filter-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.f === f)
+    );
+    renderGuestList();
+  }
+
+  function renderGuestList() {
+    const q    = (document.getElementById('overviewSearch').value || '').toLowerCase();
+    let   list = allGuests;
+    if (guestFilter === 'arrived') list = list.filter(g => g.checked_in);
+    if (guestFilter === 'pending') list = list.filter(g => !g.checked_in);
+    if (q) list = list.filter(g =>
+      g.name.toLowerCase().includes(q) ||
+      (g.table_number || '').toLowerCase().includes(q)
+    );
+
+    const el = document.getElementById('overviewList');
+    if (list.length === 0) {
+      el.innerHTML = '<p class="empty-state">No guests found.</p>';
+      return;
+    }
+    el.innerHTML = list.map(g => `
+      <div class="guest-row ${g.checked_in ? 'guest-row--arrived' : ''}">
+        <span class="guest-status-icon">${g.checked_in ? '&#10003;' : '&#9675;'}</span>
+        <span class="guest-row-name">${esc(g.name)}</span>
+        <span class="guest-row-table">${esc(g.table_number || '')}</span>
+      </div>`).join('');
+  }
+
+  // ── Check In tab ──────────────────────────────────────────────────────────
+  function searchForCheckin() {
+    clearTimeout(checkinTimer);
+    const q = document.getElementById('checkinSearch').value.trim();
+    document.getElementById('checkinSuccess').style.display = 'none';
+    if (q.length < 2) { document.getElementById('checkinResults').innerHTML = ''; return; }
+    checkinTimer = setTimeout(() => renderCheckinResults(q), 300);
+  }
+
+  function renderCheckinResults(q) {
+    const matches = allGuests
+      .filter(g => g.name.toLowerCase().includes(q.toLowerCase()))
+      .slice(0, 6);
+
+    const el = document.getElementById('checkinResults');
+    if (matches.length === 0) {
+      el.innerHTML = '<p class="search-none">No match — try a different spelling.</p>';
+      return;
+    }
+    el.innerHTML = matches.map(g => `
+      <div class="checkin-card ${g.checked_in ? 'checkin-card--done' : ''}">
+        <div class="checkin-card-info">
+          <div class="checkin-card-name">${esc(g.name)}</div>
+          <div class="checkin-card-table">
+            Table ${esc(g.table_number || '')}
+            ${g.table_label ? `· <em>${esc(g.table_label)}</em>` : ''}
+          </div>
+        </div>
+        ${g.checked_in
+          ? '<span class="checkin-badge">&#10003; Arrived</span>'
+          : `<button class="checkin-btn"
+               onclick="doCheckIn('${g.id}','${esc(g.name)}','${esc(g.table_number||'')}','${esc(g.table_label||'')}')">
+               Check In
+             </button>`}
+      </div>`).join('');
+  }
+
+  async function doCheckIn(id, name, table, label) {
+    await sb.from('guests')
+      .update({ checked_in: true, checked_in_at: new Date().toISOString() })
+      .eq('id', id);
+
+    document.getElementById('checkinResults').innerHTML = '';
+    document.getElementById('checkinSearch').value      = '';
+    document.getElementById('csName').textContent       = name;
+    document.getElementById('csTable').textContent      = `Table ${table}`;
+    document.getElementById('csLang').textContent       = label;
+    document.getElementById('checkinSuccess').style.display = 'block';
+    await loadGuests();
+  }
+
+  function resetCheckin() {
+    document.getElementById('checkinSuccess').style.display = 'none';
+    document.getElementById('checkinSearch').value          = '';
+    document.getElementById('checkinResults').innerHTML     = '';
+    document.getElementById('checkinSearch').focus();
+  }
+
+  // ── Add Gift tab ──────────────────────────────────────────────────────────
+  function setGiftType(type) {
+    giftType = type;
+    document.querySelectorAll('#hTypeToggle .toggle-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.val === type)
+    );
+    document.getElementById('hDescField').style.display = type === 'gift' ? 'block' : 'none';
+  }
+
+  function setGiftSide(side) {
+    giftSide = side;
+    document.querySelectorAll('#hSideToggle .toggle-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.val === side)
+    );
+  }
+
+  async function submitGift(e) {
+    e.preventDefault();
+    const btn    = document.getElementById('hSubmitBtn');
+    const status = document.getElementById('hStatus');
+    const name   = document.getElementById('hName').value.trim();
+    if (!name) return;
+
+    btn.disabled = true; btn.textContent = 'Saving…';
+
+    const entry = {
+      giver_name: name,
+      type:       giftType,
+      side:       giftSide,
+      notes:      document.getElementById('hNotes').value.trim() || null,
+    };
+    if (giftType === 'gift') {
+      entry.description = document.getElementById('hDesc').value.trim() || null;
+    }
+
+    const { error } = await sb.from('gifts').insert(entry);
+    if (error) {
+      status.textContent = 'Error — try again.'; status.className = 'form-status error';
+    } else {
+      status.textContent = '✓ Saved!'; status.className = 'form-status success';
+      document.getElementById('giftForm').reset();
+      setGiftType('angpau'); setGiftSide('bride');
+      setTimeout(() => { status.textContent = ''; }, 2000);
+      document.getElementById('hName').focus();
+    }
+    btn.disabled = false; btn.textContent = 'Save';
+  }
+
+  // ── Utilities ─────────────────────────────────────────────────────────────
+  function switchTab(tab) {
+    document.querySelectorAll('.admin-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.tab === tab)
+    );
+    document.querySelectorAll('.admin-panel').forEach(p => p.style.display = 'none');
+    document.getElementById('panel-' + tab).style.display = 'block';
+    if (tab === 'checkin') document.getElementById('checkinSearch').focus();
+    if (tab === 'gift')    document.getElementById('hName').focus();
+  }
+
+  function esc(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>

@@ -41,9 +41,10 @@
 
   <!-- Tab Bar -->
   <div class="admin-tabs">
-    <button class="admin-tab active" data-tab="summary" onclick="switchTab('summary')">Summary</button>
-    <button class="admin-tab" data-tab="gifts"   onclick="switchTab('gifts')">Gift Log</button>
-    <button class="admin-tab" data-tab="seating" onclick="switchTab('seating')">Seating</button>
+    <button class="admin-tab active" data-tab="summary"    onclick="switchTab('summary')">Summary</button>
+    <button class="admin-tab" data-tab="attendance" onclick="switchTab('attendance')">Attendance</button>
+    <button class="admin-tab" data-tab="gifts"      onclick="switchTab('gifts')">Gift Log</button>
+    <button class="admin-tab" data-tab="seating"    onclick="switchTab('seating')">Seating</button>
   </div>
 
   <!-- ── Tab: Summary ──────────────────────────────────────────────────── -->
@@ -180,6 +181,35 @@
 
   </div><!-- /panel-seating -->
 
+  <!-- ── Tab: Attendance ───────────────────────────────────────────────── -->
+  <div class="admin-panel" id="panel-attendance" style="display:none;">
+
+    <div class="headcount-card" id="adminHeadcountCard">
+      <div class="headcount-number" id="adminHeadcountNum">—</div>
+      <div class="headcount-label">guests arrived</div>
+      <div class="headcount-sub"   id="adminHeadcountSub">of — total</div>
+    </div>
+
+    <div class="admin-toolbar">
+      <div class="filter-group">
+        <button class="filter-btn active" data-f="all"     onclick="setAttFilter('all')">All</button>
+        <button class="filter-btn"        data-f="arrived" onclick="setAttFilter('arrived')">Arrived</button>
+        <button class="filter-btn"        data-f="pending" onclick="setAttFilter('pending')">Not yet</button>
+      </div>
+      <button class="export-btn" onclick="exportAttendanceCSV()">&#8595; Export CSV</button>
+    </div>
+
+    <div class="search-wrap" style="margin-bottom:1rem;">
+      <input type="text" class="search-input" id="attSearch"
+        placeholder="Search name or table…" oninput="renderAttendance()"
+        autocomplete="off">
+      <span class="search-icon">&#9906;</span>
+    </div>
+
+    <div id="attendanceList"><p class="empty-state">Loading…</p></div>
+
+  </div><!-- /panel-attendance -->
+
 </div><!-- /dashboard -->
 
 <script src="supabase-config.js"></script>
@@ -249,10 +279,12 @@ async function signOut() {
 
 // ── Realtime ──────────────────────────────────────────────────────────────
 function subscribeRealtime() {
-  realtimeCh = sb.channel('admin-gifts-live')
+  realtimeCh = sb.channel('admin-live')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'gifts' }, () => {
-      loadGifts();
-      loadSummary();
+      loadGifts(); loadSummary();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'guests' }, () => {
+      loadGuests(); loadSummary();
     })
     .subscribe(status => {
       const dot = document.getElementById('liveDot');
@@ -274,15 +306,23 @@ function loadAll() {
   loadSummary();
   loadGifts();
   loadGuests();
+  loadAttendance();
 }
 
 // ── Summary ───────────────────────────────────────────────────────────────
 async function loadSummary() {
-  const { data } = await sb.from('gifts').select('*');
-  if (!data) return;
+  const [{ data: giftData }, { data: guestData }] = await Promise.all([
+    sb.from('gifts').select('*'),
+    sb.from('guests').select('checked_in'),
+  ]);
+  const data = giftData || [];
 
-  const angpau = data.filter(g => g.type === 'angpau');
-  const gifts  = data.filter(g => g.type === 'gift');
+  // Headcount
+  const arrived = (guestData || []).filter(g => g.checked_in).length;
+  const total   = (guestData || []).length;
+
+  const angpau  = data.filter(g => g.type === 'angpau');
+  const gifts   = data.filter(g => g.type === 'gift');
   const pending = data.filter(g => !g.thank_you_sent).length;
 
   // Group by currency
@@ -300,7 +340,11 @@ async function loadSummary() {
         <div class="summary-label">Total Angpau</div>
       </div>`).join('');
 
-  document.getElementById('summaryGrid').innerHTML = currCards + `
+  document.getElementById('summaryGrid').innerHTML = `
+    <div class="summary-card summary-card--total">
+      <div class="summary-value">${arrived} / ${total}</div>
+      <div class="summary-label">Guests arrived</div>
+    </div>` + currCards + `
     <div class="summary-card">
       <div class="summary-value">${angpau.length}</div>
       <div class="summary-label">Angpau envelopes</div>
@@ -636,6 +680,86 @@ function capFirst(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 function setStatus(el, msg, cls) {
   el.textContent = msg;
   el.className   = 'form-status' + (cls ? ' ' + cls : '');
+}
+
+// ── Attendance ────────────────────────────────────────────────────────────
+let attFilter = 'all';
+
+async function loadAttendance() {
+  const { data } = await sb.from('guests').select('*').order('checked_in_at', { ascending: false, nullsFirst: false }).order('name');
+  allGuests = data || [];
+  updateAdminHeadcount();
+  renderAttendance();
+}
+
+function updateAdminHeadcount() {
+  const arrived = allGuests.filter(g => g.checked_in).length;
+  document.getElementById('adminHeadcountNum').textContent = arrived;
+  document.getElementById('adminHeadcountSub').textContent = `of ${allGuests.length} total`;
+}
+
+function setAttFilter(f) {
+  attFilter = f;
+  document.querySelectorAll('#panel-attendance .filter-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.f === f)
+  );
+  renderAttendance();
+}
+
+function renderAttendance() {
+  const q    = (document.getElementById('attSearch').value || '').toLowerCase();
+  let   list = allGuests;
+  if (attFilter === 'arrived') list = list.filter(g => g.checked_in);
+  if (attFilter === 'pending') list = list.filter(g => !g.checked_in);
+  if (q) list = list.filter(g =>
+    g.name.toLowerCase().includes(q) ||
+    (g.table_number || '').toLowerCase().includes(q)
+  );
+
+  const el = document.getElementById('attendanceList');
+  if (list.length === 0) { el.innerHTML = '<p class="empty-state">No guests found.</p>'; return; }
+
+  el.innerHTML = `
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Name</th><th>Table</th><th>Status</th><th>Checked in at</th><th></th></tr></thead>
+        <tbody>
+          ${list.map(g => `
+            <tr>
+              <td class="cell-name">${esc(g.name)}</td>
+              <td>${esc(g.table_number || '—')}</td>
+              <td>${g.checked_in
+                ? '<span style="color:#388e3c; font-weight:700;">&#10003; Arrived</span>'
+                : '<span style="color:#bbb;">Pending</span>'}</td>
+              <td class="cell-time">${g.checked_in_at ? fmtTime(g.checked_in_at) : '—'}</td>
+              <td>${g.checked_in
+                ? `<button class="edit-btn" onclick="undoCheckin('${g.id}')">Undo</button>`
+                : ''}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+async function undoCheckin(id) {
+  await sb.from('guests').update({ checked_in: false, checked_in_at: null }).eq('id', id);
+  await loadAttendance();
+  loadSummary();
+}
+
+function exportAttendanceCSV() {
+  const rows = [['Name','Table','Table Label','Side','Arrived','Checked In At']];
+  allGuests.forEach(g => rows.push([
+    g.name, g.table_number || '', g.table_label || '', g.side || '',
+    g.checked_in ? 'Yes' : 'No',
+    g.checked_in_at ? fmtTime(g.checked_in_at) : '',
+  ]));
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = Object.assign(document.createElement('a'), {
+    href: 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv),
+    download: 'attendance-emily-parth.csv',
+  });
+  a.click();
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────
