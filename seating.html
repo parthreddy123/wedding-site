@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Your Table — Emily &amp; Parth</title>
+  <meta name="description" content="Find your table assignment for Emily & Parth's wedding.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <ul class="nav-list">
+      <li><a href="index.html#ceremony" class="nav-link">Celebration</a></li>
+      <li><a href="index.html#rsvp" class="nav-link">RSVP</a></li>
+      <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+      <li><a href="seating.html" class="nav-link">My Table</a></li>
+      <li><a href="travel.html" class="nav-link">Travel Guide</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="seating-hero">
+    <p class="seating-hero-sub">Emily &amp; Parth · 9 May 2026</p>
+    <h1 class="seating-hero-title">Find Your Table</h1>
+    <p class="seating-hero-hint">Type your name to find your seat</p>
+  </section>
+
+  <!-- Search -->
+  <section class="seating-search-section">
+    <div class="container">
+      <div class="search-wrap">
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Your name…"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="words"
+          spellcheck="false"
+        >
+        <span class="search-icon">&#9906;</span>
+      </div>
+      <div id="searchResults" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-names">Emily Oi &amp; Parth Reddy</p>
+    <p class="footer-date">Saturday, May 9, 2026</p>
+    <p class="footer-contact">
+      Need help? Contact <strong>Potter</strong> at
+      <a href="tel:01131257371">011-3125 7371</a>
+    </p>
+    <p class="footer-copy">&copy; 2026 — Made with love</p>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script>
+    // Nav scroll effect
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    let timer;
+    const input   = document.getElementById('searchInput');
+    const results = document.getElementById('searchResults');
+
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      const q = input.value.trim();
+      if (q.length < 2) { results.innerHTML = ''; return; }
+      timer = setTimeout(() => search(q), 300);
+    });
+
+    async function search(q) {
+      results.innerHTML = '<p class="search-loading">Searching…</p>';
+
+      const { data, error } = await sb
+        .from('guests')
+        .select('name, table_number, table_label')
+        .ilike('name', `%${q}%`)
+        .limit(8);
+
+      if (error) {
+        results.innerHTML = '<p class="search-none">Something went wrong — please try again.</p>';
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        results.innerHTML = `
+          <div class="search-none">
+            <p>No match for <strong>"${esc(q)}"</strong>.</p>
+            <p>Try a different spelling, or ask <strong>Potter</strong>:
+               <a href="tel:01131257371">011-3125 7371</a></p>
+          </div>`;
+        return;
+      }
+
+      results.innerHTML = data.map(g => `
+        <div class="seat-card">
+          <div class="seat-name">${esc(g.name)}</div>
+          <div class="seat-table">
+            Table <strong>${esc(g.table_number)}</strong>
+            ${g.table_label ? `<span class="seat-label">— ${esc(g.table_label)}</span>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

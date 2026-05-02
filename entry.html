@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gift Entry — Emily &amp; Parth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+<!-- ── PIN Overlay ── -->
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-box">
+    <p class="pin-names">Emily &amp; Parth</p>
+    <h1 class="pin-title">Gift Entry</h1>
+    <p class="pin-hint">Enter your access code</p>
+    <input
+      type="password"
+      inputmode="numeric"
+      maxlength="6"
+      class="pin-input"
+      id="pinInput"
+      autocomplete="off"
+      placeholder="••••"
+    >
+    <button class="btn-submit" id="pinBtn" onclick="checkPin()">Enter</button>
+    <p class="pin-error" id="pinError"></p>
+  </div>
+</div>
+
+<!-- ── Entry Page ── -->
+<div class="entry-page" id="entryPage" style="display:none;">
+
+  <div class="entry-header">
+    <p class="entry-header-sub">Emily &amp; Parth · 9 May 2026</p>
+    <h1 class="entry-header-title">Gift Entry</h1>
+  </div>
+
+  <div class="entry-form-wrap">
+    <form id="entryForm" onsubmit="submitEntry(event)" autocomplete="off">
+
+      <div class="form-group">
+        <label for="giverName">Giver's Name <span class="required">*</span></label>
+        <input type="text" id="giverName" placeholder="e.g. Uncle David Lim" required>
+      </div>
+
+      <div class="form-group">
+        <label>Type <span class="required">*</span></label>
+        <div class="toggle-group" id="typeToggle">
+          <button type="button" class="toggle-btn active" data-val="angpau" onclick="setType('angpau')">Angpau / Cash</button>
+          <button type="button" class="toggle-btn" data-val="gift" onclick="setType('gift')">Physical Gift</button>
+        </div>
+      </div>
+
+      <!-- Angpau fields -->
+      <div id="angpauFields">
+        <div class="amount-row">
+          <div class="form-group" style="flex:2;">
+            <label for="amount">Amount <span class="required">*</span></label>
+            <input type="number" id="amount" placeholder="0" min="0" step="any" inputmode="decimal">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label for="currency">Currency</label>
+            <select id="currency">
+              <option value="MYR" selected>MYR</option>
+              <option value="SGD">SGD</option>
+              <option value="AUD">AUD</option>
+              <option value="USD">USD</option>
+              <option value="INR">INR</option>
+              <option value="GBP">GBP</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gift fields -->
+      <div id="giftFields" style="display:none;">
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input type="text" id="description" placeholder="e.g. Crystal vase">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>From <span class="optional">(optional)</span></label>
+        <div class="toggle-group" id="sideToggle">
+          <button type="button" class="toggle-btn active" data-val="bride" onclick="setSide('bride')">Bride's side</button>
+          <button type="button" class="toggle-btn" data-val="groom" onclick="setSide('groom')">Groom's side</button>
+          <button type="button" class="toggle-btn" data-val="both" onclick="setSide('both')">Both</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notes <span class="optional">(optional)</span></label>
+        <input type="text" id="notes" placeholder="Any extra notes">
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">Save Entry</button>
+      <p class="form-status" id="formStatus"></p>
+
+    </form>
+  </div>
+</div>
+
+<script src="supabase-config.js"></script>
+<script>
+  let currentType = 'angpau';
+  let currentSide = 'bride';
+
+  // ── PIN ──────────────────────────────────────────────────────────────────
+  function checkPin() {
+    const val = document.getElementById('pinInput').value.trim();
+    if (val === ENTRY_PIN) {
+      document.getElementById('pinOverlay').style.display = 'none';
+      document.getElementById('entryPage').style.display = 'block';
+      document.getElementById('giverName').focus();
+    } else {
+      const err = document.getElementById('pinError');
+      err.textContent = 'Incorrect code — try again.';
+      document.getElementById('pinInput').value = '';
+      document.getElementById('pinInput').focus();
+      setTimeout(() => { err.textContent = ''; }, 2500);
+    }
+  }
+
+  document.getElementById('pinInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPin();
+  });
+
+  // ── Type / Side toggles ──────────────────────────────────────────────────
+  function setType(type) {
+    currentType = type;
+    document.querySelectorAll('#typeToggle .toggle-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.val === type)
+    );
+    document.getElementById('angpauFields').style.display = type === 'angpau' ? 'block' : 'none';
+    document.getElementById('giftFields').style.display   = type === 'gift'   ? 'block' : 'none';
+  }
+
+  function setSide(side) {
+    currentSide = side;
+    document.querySelectorAll('#sideToggle .toggle-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.val === side)
+    );
+  }
+
+  // ── Submit ───────────────────────────────────────────────────────────────
+  async function submitEntry(e) {
+    e.preventDefault();
+    const btn    = document.getElementById('submitBtn');
+    const status = document.getElementById('formStatus');
+    const name   = document.getElementById('giverName').value.trim();
+    if (!name) return;
+
+    // Validate amount for angpau
+    if (currentType === 'angpau') {
+      const amt = parseFloat(document.getElementById('amount').value);
+      if (isNaN(amt) || amt <= 0) {
+        setStatus(status, 'Please enter a valid amount.', 'error');
+        return;
+      }
+    }
+
+    btn.disabled    = true;
+    btn.textContent = 'Saving…';
+    status.textContent = '';
+
+    const entry = {
+      giver_name: name,
+      type:       currentType,
+      side:       currentSide,
+      notes:      document.getElementById('notes').value.trim() || null,
+    };
+
+    if (currentType === 'angpau') {
+      entry.amount   = parseFloat(document.getElementById('amount').value);
+      entry.currency = document.getElementById('currency').value;
+    } else {
+      entry.description = document.getElementById('description').value.trim() || null;
+    }
+
+    const { error } = await sb.from('gifts').insert(entry);
+
+    if (error) {
+      setStatus(status, 'Error saving — please try again.', 'error');
+    } else {
+      setStatus(status, '✓ Saved!', 'success');
+      document.getElementById('entryForm').reset();
+      setType('angpau');
+      setSide('bride');
+      setTimeout(() => { status.textContent = ''; }, 2000);
+      document.getElementById('giverName').focus();
+    }
+
+    btn.disabled    = false;
+    btn.textContent = 'Save Entry';
+  }
+
+  function setStatus(el, msg, cls) {
+    el.textContent = msg;
+    el.className   = 'form-status ' + cls;
+  }
+</script>
+</body>
+</html>

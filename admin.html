@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Emily &amp; Parth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+<!-- ── Login Screen ─────────────────────────────────────────────────────── -->
+<div class="pin-overlay" id="loginScreen">
+  <div class="pin-box">
+    <p class="pin-names">Emily &amp; Parth</p>
+    <h1 class="pin-title">Admin</h1>
+    <p class="pin-hint">We'll send you a magic link to sign in</p>
+    <div class="form-group" style="margin-top:1.5rem; text-align:left;">
+      <label for="adminEmail">Your email</label>
+      <input type="email" id="adminEmail" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <button class="btn-submit" id="loginBtn" onclick="sendMagicLink()">Send Magic Link</button>
+    <p class="form-status" id="loginStatus"></p>
+  </div>
+</div>
+
+<!-- ── Dashboard ────────────────────────────────────────────────────────── -->
+<div id="dashboard" style="display:none;">
+
+  <!-- Admin Nav -->
+  <nav class="admin-nav">
+    <span class="admin-nav-title">Emily &amp; Parth — Admin</span>
+    <div class="admin-nav-right">
+      <span class="live-dot" id="liveDot" title="Realtime sync">&#9679; Live</span>
+      <button class="admin-signout-btn" onclick="signOut()">Sign out</button>
+    </div>
+  </nav>
+
+  <!-- Tab Bar -->
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="summary" onclick="switchTab('summary')">Summary</button>
+    <button class="admin-tab" data-tab="gifts"   onclick="switchTab('gifts')">Gift Log</button>
+    <button class="admin-tab" data-tab="seating" onclick="switchTab('seating')">Seating</button>
+  </div>
+
+  <!-- ── Tab: Summary ──────────────────────────────────────────────────── -->
+  <div class="admin-panel" id="panel-summary">
+    <div class="summary-grid" id="summaryGrid">
+      <p class="empty-state">Loading…</p>
+    </div>
+  </div>
+
+  <!-- ── Tab: Gift Log ─────────────────────────────────────────────────── -->
+  <div class="admin-panel" id="panel-gifts" style="display:none;">
+
+    <!-- Add Entry -->
+    <div class="admin-card">
+      <h3 class="admin-card-title">Add Entry</h3>
+      <form id="adminEntryForm" onsubmit="adminSubmitEntry(event)" autocomplete="off">
+        <div class="admin-form-row">
+          <div class="form-group" style="flex:2;">
+            <label>Giver's Name <span class="required">*</span></label>
+            <input type="text" id="aName" placeholder="Name" required>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>Side</label>
+            <select id="aSide">
+              <option value="bride">Bride's</option>
+              <option value="groom">Groom's</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>Type</label>
+            <select id="aType" onchange="toggleAdminType()">
+              <option value="angpau">Angpau</option>
+              <option value="gift">Gift</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-form-row" id="aAngpauRow">
+          <div class="form-group" style="flex:2;">
+            <label>Amount <span class="required">*</span></label>
+            <input type="number" id="aAmount" placeholder="0" min="0" step="any" inputmode="decimal">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>Currency</label>
+            <select id="aCurrency">
+              <option value="MYR" selected>MYR</option>
+              <option value="SGD">SGD</option>
+              <option value="AUD">AUD</option>
+              <option value="USD">USD</option>
+              <option value="INR">INR</option>
+              <option value="GBP">GBP</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-form-row" id="aGiftRow" style="display:none;">
+          <div class="form-group" style="flex:1;">
+            <label>Description</label>
+            <input type="text" id="aDesc" placeholder="e.g. Crystal vase">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes <span class="optional">(optional)</span></label>
+          <input type="text" id="aNotes" placeholder="Optional notes">
+        </div>
+        <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+          <button type="submit" class="btn-submit" id="aSubmitBtn" style="max-width:180px;">Add Entry</button>
+          <span class="form-status" id="aStatus"></span>
+        </div>
+      </form>
+    </div>
+
+    <!-- Filters + Export -->
+    <div class="admin-toolbar">
+      <div class="filter-group">
+        <button class="filter-btn active" data-f="all"     onclick="setFilter('all')">All</button>
+        <button class="filter-btn"        data-f="angpau"  onclick="setFilter('angpau')">Angpau</button>
+        <button class="filter-btn"        data-f="gift"    onclick="setFilter('gift')">Gifts</button>
+        <button class="filter-btn"        data-f="pending" onclick="setFilter('pending')">Thank-you pending</button>
+      </div>
+      <button class="export-btn" onclick="exportCSV()">&#8595; Export CSV</button>
+    </div>
+
+    <!-- Gift List -->
+    <div id="giftList"><p class="empty-state">Loading…</p></div>
+
+  </div><!-- /panel-gifts -->
+
+  <!-- ── Tab: Seating ───────────────────────────────────────────────────── -->
+  <div class="admin-panel" id="panel-seating" style="display:none;">
+
+    <!-- Add / Edit Guest -->
+    <div class="admin-card">
+      <h3 class="admin-card-title" id="guestFormTitle">Add Guest</h3>
+      <form id="guestForm" onsubmit="saveGuest(event)" autocomplete="off">
+        <input type="hidden" id="guestEditId">
+        <div class="admin-form-row">
+          <div class="form-group" style="flex:2;">
+            <label>Guest Name <span class="required">*</span></label>
+            <input type="text" id="guestName" placeholder="Full name as on invitation" required>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>Table No. <span class="required">*</span></label>
+            <input type="text" id="guestTable" placeholder="e.g. 7" required>
+          </div>
+          <div class="form-group" style="flex:1.5;">
+            <label>Table Label</label>
+            <input type="text" id="guestLabel" placeholder="e.g. Garden Terrace">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>Side</label>
+            <select id="guestSide">
+              <option value="bride">Bride's</option>
+              <option value="groom">Groom's</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap;">
+          <button type="submit" class="btn-submit" id="guestSubmitBtn" style="max-width:160px;">Save Guest</button>
+          <button type="button" class="btn-outline" id="guestCancelBtn" onclick="cancelGuestEdit()" style="display:none;">Cancel</button>
+          <label class="import-label">
+            &#8679; Import CSV
+            <input type="file" accept=".csv" onchange="importGuestsCSV(event)" style="display:none;">
+          </label>
+          <span class="form-status" id="guestStatus"></span>
+        </div>
+      </form>
+      <p class="import-hint">CSV format: Name, Table Number, Table Label (optional), Side (optional)</p>
+    </div>
+
+    <!-- Guest List -->
+    <div id="guestList"><p class="empty-state">Loading…</p></div>
+
+  </div><!-- /panel-seating -->
+
+</div><!-- /dashboard -->
+
+<script src="supabase-config.js"></script>
+<script>
+// ── State ─────────────────────────────────────────────────────────────────
+let allGifts      = [];
+let allGuests     = [];
+let currentFilter = 'all';
+let realtimeCh    = null;
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) onSignIn(session);
+}
+
+sb.auth.onAuthStateChange((event, session) => {
+  if (session) onSignIn(session);
+  else         onSignOut();
+});
+
+async function sendMagicLink() {
+  const email  = document.getElementById('adminEmail').value.trim();
+  const status = document.getElementById('loginStatus');
+  const btn    = document.getElementById('loginBtn');
+  if (!email) return;
+
+  btn.disabled = true;
+  const { error } = await sb.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: `${location.origin}/admin.html` }
+  });
+
+  if (error) {
+    status.textContent = 'Error: ' + error.message;
+    status.className   = 'form-status error';
+    btn.disabled       = false;
+  } else {
+    status.textContent = 'Magic link sent — check your email!';
+    status.className   = 'form-status success';
+  }
+}
+
+function onSignIn(session) {
+  if (!ADMIN_EMAILS.includes(session.user.email)) {
+    sb.auth.signOut();
+    const s = document.getElementById('loginStatus');
+    s.textContent = 'Access denied for ' + session.user.email;
+    s.className   = 'form-status error';
+    return;
+  }
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display   = 'block';
+  loadAll();
+  subscribeRealtime();
+}
+
+function onSignOut() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('dashboard').style.display   = 'none';
+  if (realtimeCh) { sb.removeChannel(realtimeCh); realtimeCh = null; }
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+}
+
+// ── Realtime ──────────────────────────────────────────────────────────────
+function subscribeRealtime() {
+  realtimeCh = sb.channel('admin-gifts-live')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'gifts' }, () => {
+      loadGifts();
+      loadSummary();
+    })
+    .subscribe(status => {
+      const dot = document.getElementById('liveDot');
+      dot.style.color = status === 'SUBSCRIBED' ? '#4caf50' : '#bbb';
+    });
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.tab === tab)
+  );
+  document.querySelectorAll('.admin-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('panel-' + tab).style.display = 'block';
+}
+
+// ── Load all ──────────────────────────────────────────────────────────────
+function loadAll() {
+  loadSummary();
+  loadGifts();
+  loadGuests();
+}
+
+// ── Summary ───────────────────────────────────────────────────────────────
+async function loadSummary() {
+  const { data } = await sb.from('gifts').select('*');
+  if (!data) return;
+
+  const angpau = data.filter(g => g.type === 'angpau');
+  const gifts  = data.filter(g => g.type === 'gift');
+  const pending = data.filter(g => !g.thank_you_sent).length;
+
+  // Group by currency
+  const byCurrency = {};
+  angpau.forEach(g => {
+    const cur = g.currency || 'MYR';
+    byCurrency[cur] = (byCurrency[cur] || 0) + parseFloat(g.amount || 0);
+  });
+
+  const currCards = Object.entries(byCurrency)
+    .sort((a, b) => b[1] - a[1])
+    .map(([cur, total]) => `
+      <div class="summary-card summary-card--total">
+        <div class="summary-value">${cur} ${total.toLocaleString('en-MY', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</div>
+        <div class="summary-label">Total Angpau</div>
+      </div>`).join('');
+
+  document.getElementById('summaryGrid').innerHTML = currCards + `
+    <div class="summary-card">
+      <div class="summary-value">${angpau.length}</div>
+      <div class="summary-label">Angpau envelopes</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-value">${gifts.length}</div>
+      <div class="summary-label">Physical gifts</div>
+    </div>
+    <div class="summary-card ${pending > 0 ? 'summary-card--warn' : ''}">
+      <div class="summary-value">${pending}</div>
+      <div class="summary-label">Thank-you pending</div>
+    </div>`;
+}
+
+// ── Gift Log ──────────────────────────────────────────────────────────────
+async function loadGifts() {
+  const { data } = await sb.from('gifts').select('*').order('created_at', { ascending: false });
+  allGifts = data || [];
+  renderGifts();
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.f === f)
+  );
+  renderGifts();
+}
+
+function renderGifts() {
+  let list = allGifts;
+  if (currentFilter === 'angpau')  list = allGifts.filter(g => g.type === 'angpau');
+  if (currentFilter === 'gift')    list = allGifts.filter(g => g.type === 'gift');
+  if (currentFilter === 'pending') list = allGifts.filter(g => !g.thank_you_sent);
+
+  const el = document.getElementById('giftList');
+  if (list.length === 0) {
+    el.innerHTML = '<p class="empty-state">No entries yet.</p>';
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Amount / Item</th>
+            <th>Side</th>
+            <th>Notes</th>
+            <th>Thank You</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${list.map(g => `
+            <tr>
+              <td class="cell-time">${fmtTime(g.created_at)}</td>
+              <td class="cell-name">${esc(g.giver_name)}</td>
+              <td>${g.type === 'angpau' ? 'Angpau' : 'Gift'}</td>
+              <td>${g.type === 'angpau'
+                    ? `${g.currency || 'MYR'} ${parseFloat(g.amount || 0).toLocaleString()}`
+                    : (g.description ? esc(g.description) : '—')}</td>
+              <td>${g.side ? capFirst(g.side) : '—'}</td>
+              <td>${g.notes ? esc(g.notes) : '—'}</td>
+              <td>
+                <button
+                  class="ty-btn ${g.thank_you_sent ? 'ty-sent' : ''}"
+                  onclick="toggleTy('${g.id}', ${g.thank_you_sent})"
+                  title="Toggle thank-you status"
+                >${g.thank_you_sent ? '✓ Sent' : 'Pending'}</button>
+              </td>
+              <td>
+                <button class="del-btn" onclick="deleteGift('${g.id}')" title="Delete">✕</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+async function toggleTy(id, current) {
+  await sb.from('gifts').update({ thank_you_sent: !current }).eq('id', id);
+  // Realtime will trigger reload; fallback direct reload too
+  loadGifts();
+  loadSummary();
+}
+
+async function deleteGift(id) {
+  if (!confirm('Delete this entry? This cannot be undone.')) return;
+  await sb.from('gifts').delete().eq('id', id);
+  loadGifts();
+  loadSummary();
+}
+
+function toggleAdminType() {
+  const type = document.getElementById('aType').value;
+  document.getElementById('aAngpauRow').style.display = type === 'angpau' ? '' : 'none';
+  document.getElementById('aGiftRow').style.display   = type === 'gift'   ? '' : 'none';
+}
+
+async function adminSubmitEntry(e) {
+  e.preventDefault();
+  const btn    = document.getElementById('aSubmitBtn');
+  const status = document.getElementById('aStatus');
+  const name   = document.getElementById('aName').value.trim();
+  const type   = document.getElementById('aType').value;
+  if (!name) return;
+
+  if (type === 'angpau') {
+    const amt = parseFloat(document.getElementById('aAmount').value);
+    if (isNaN(amt) || amt <= 0) {
+      setStatus(status, 'Enter a valid amount.', 'error'); return;
+    }
+  }
+
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const entry = {
+    giver_name: name,
+    type,
+    side:  document.getElementById('aSide').value,
+    notes: document.getElementById('aNotes').value.trim() || null,
+  };
+  if (type === 'angpau') {
+    entry.amount   = parseFloat(document.getElementById('aAmount').value);
+    entry.currency = document.getElementById('aCurrency').value;
+  } else {
+    entry.description = document.getElementById('aDesc').value.trim() || null;
+  }
+
+  const { error } = await sb.from('gifts').insert(entry);
+  if (error) {
+    setStatus(status, 'Error — try again.', 'error');
+  } else {
+    setStatus(status, '✓ Saved!', 'success');
+    document.getElementById('adminEntryForm').reset();
+    toggleAdminType();
+    setTimeout(() => { status.textContent = ''; }, 2000);
+  }
+  btn.disabled = false; btn.textContent = 'Add Entry';
+}
+
+function exportCSV() {
+  const rows = [['Time','Name','Type','Amount','Currency','Description','Side','Notes','ThankYouSent']];
+  allGifts.forEach(g => rows.push([
+    g.created_at, g.giver_name, g.type,
+    g.amount || '', g.currency || '', g.description || '',
+    g.side || '', g.notes || '', g.thank_you_sent
+  ]));
+  const csv = rows.map(r =>
+    r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')
+  ).join('\n');
+  const a = Object.assign(document.createElement('a'), {
+    href:     'data:text/csv;charset=utf-8,' + encodeURIComponent(csv),
+    download: 'gifts-emily-parth.csv',
+  });
+  a.click();
+}
+
+// ── Seating ───────────────────────────────────────────────────────────────
+async function loadGuests() {
+  const { data } = await sb.from('guests').select('*').order('table_number').order('name');
+  allGuests = data || [];
+  renderGuests();
+}
+
+function renderGuests() {
+  const el = document.getElementById('guestList');
+  if (allGuests.length === 0) {
+    el.innerHTML = '<p class="empty-state">No guests yet. Add above or import a CSV.</p>';
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>Name</th><th>Table</th><th>Label</th><th>Side</th><th></th></tr>
+        </thead>
+        <tbody>
+          ${allGuests.map(g => `
+            <tr>
+              <td class="cell-name">${esc(g.name)}</td>
+              <td>${esc(g.table_number)}</td>
+              <td>${g.table_label ? esc(g.table_label) : '—'}</td>
+              <td>${g.side ? capFirst(g.side) : '—'}</td>
+              <td>
+                <button class="edit-btn" onclick="startEditGuest('${g.id}')">Edit</button>
+                <button class="del-btn"  onclick="deleteGuest('${g.id}')">✕</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+async function saveGuest(e) {
+  e.preventDefault();
+  const btn    = document.getElementById('guestSubmitBtn');
+  const status = document.getElementById('guestStatus');
+  const editId = document.getElementById('guestEditId').value;
+
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const payload = {
+    name:         document.getElementById('guestName').value.trim(),
+    table_number: document.getElementById('guestTable').value.trim(),
+    table_label:  document.getElementById('guestLabel').value.trim() || null,
+    side:         document.getElementById('guestSide').value,
+  };
+
+  let error;
+  if (editId) {
+    ({ error } = await sb.from('guests').update(payload).eq('id', editId));
+  } else {
+    ({ error } = await sb.from('guests').insert(payload));
+  }
+
+  if (error) {
+    setStatus(status, 'Error — try again.', 'error');
+  } else {
+    setStatus(status, '✓ Saved!', 'success');
+    cancelGuestEdit();
+    await loadGuests();
+    setTimeout(() => { status.textContent = ''; }, 2000);
+  }
+  btn.disabled = false; btn.textContent = 'Save Guest';
+}
+
+function startEditGuest(id) {
+  const g = allGuests.find(x => x.id === id);
+  if (!g) return;
+  document.getElementById('guestEditId').value  = g.id;
+  document.getElementById('guestName').value    = g.name;
+  document.getElementById('guestTable').value   = g.table_number;
+  document.getElementById('guestLabel').value   = g.table_label || '';
+  document.getElementById('guestSide').value    = g.side || 'bride';
+  document.getElementById('guestFormTitle').textContent = 'Edit Guest';
+  document.getElementById('guestSubmitBtn').textContent = 'Update Guest';
+  document.getElementById('guestCancelBtn').style.display = '';
+  document.getElementById('guestName').focus();
+  document.getElementById('guestForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function cancelGuestEdit() {
+  document.getElementById('guestForm').reset();
+  document.getElementById('guestEditId').value  = '';
+  document.getElementById('guestFormTitle').textContent   = 'Add Guest';
+  document.getElementById('guestSubmitBtn').textContent   = 'Save Guest';
+  document.getElementById('guestCancelBtn').style.display = 'none';
+}
+
+async function deleteGuest(id) {
+  if (!confirm('Remove this guest from the seating list?')) return;
+  await sb.from('guests').delete().eq('id', id);
+  await loadGuests();
+}
+
+async function importGuestsCSV(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const status = document.getElementById('guestStatus');
+  setStatus(status, 'Importing…', '');
+
+  const text = await file.text();
+  const rows = parseCSV(text);
+  // Skip header row if first cell looks like "name" (case-insensitive)
+  const start = rows[0] && rows[0][0].toLowerCase().includes('name') ? 1 : 0;
+  const records = rows.slice(start).filter(r => r[0] && r[1]).map(r => ({
+    name:         r[0].trim(),
+    table_number: r[1].trim(),
+    table_label:  (r[2] || '').trim() || null,
+    side:         (['bride','groom','both'].includes((r[3]||'').trim().toLowerCase())
+                    ? r[3].trim().toLowerCase() : 'bride'),
+  }));
+
+  if (records.length === 0) {
+    setStatus(status, 'No valid rows found in CSV.', 'error');
+    e.target.value = '';
+    return;
+  }
+
+  const { error } = await sb.from('guests').insert(records);
+  if (error) {
+    setStatus(status, 'Import error — ' + error.message, 'error');
+  } else {
+    setStatus(status, `✓ Imported ${records.length} guests.`, 'success');
+    await loadGuests();
+    setTimeout(() => { status.textContent = ''; }, 3000);
+  }
+  e.target.value = '';
+}
+
+// Basic CSV parser — handles quoted fields
+function parseCSV(text) {
+  return text.trim().split(/\r?\n/).map(line => {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if (ch === ',' && !inQ) {
+        cols.push(cur); cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    cols.push(cur);
+    return cols;
+  });
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function fmtTime(ts) {
+  return new Date(ts).toLocaleString('en-MY', {
+    timeZone: 'Asia/Kuala_Lumpur',
+    month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function capFirst(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function setStatus(el, msg, cls) {
+  el.textContent = msg;
+  el.className   = 'form-status' + (cls ? ' ' + cls : '');
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

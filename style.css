@@ -805,3 +805,651 @@ a {
     padding-bottom: 45%;
   }
 }
+
+/* ============================================
+   PIN Overlay  (entry.html + admin.html)
+   ============================================ */
+.pin-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(160deg, var(--ivory) 0%, var(--cream) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1.5rem;
+}
+
+.pin-box {
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.pin-names {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+.pin-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 2rem;
+  color: var(--sage-dark);
+  margin-bottom: 0.4rem;
+}
+
+.pin-hint {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+}
+
+.pin-input {
+  display: block;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.3em;
+  text-align: center;
+  color: var(--text-dark);
+  background: var(--white);
+  border: 1px solid var(--sage-light);
+  border-radius: 10px;
+  outline: none;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+
+.pin-input:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(197, 184, 232, 0.2);
+}
+
+.pin-error {
+  font-size: 0.85rem;
+  color: #c0392b;
+  margin-top: 0.6rem;
+  min-height: 1.2em;
+}
+
+/* ============================================
+   Entry Page  (entry.html)
+   ============================================ */
+.entry-page {
+  min-height: 100vh;
+  background: var(--ivory);
+  padding-bottom: 3rem;
+}
+
+.entry-header {
+  background: var(--sage-dark);
+  padding: 2.5rem 1.5rem 2rem;
+  text-align: center;
+}
+
+.entry-header-sub {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 0.3rem;
+}
+
+.entry-header-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: var(--white);
+}
+
+.entry-form-wrap {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 0 1.2rem;
+}
+
+/* Toggle buttons (type / side) */
+.toggle-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 0.65rem 0.8rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--text-medium);
+  background: var(--white);
+  border: 1px solid var(--sage-light);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.toggle-btn.active {
+  background: var(--sage);
+  color: var(--white);
+  border-color: var(--sage);
+  font-weight: 700;
+}
+
+.toggle-btn:hover:not(.active) {
+  border-color: var(--sage);
+  color: var(--sage-dark);
+}
+
+/* Amount + currency row */
+.amount-row {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-end;
+}
+
+.optional {
+  font-weight: 300;
+  color: var(--text-light);
+  font-size: 0.8em;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ============================================
+   Seating Page  (seating.html)
+   ============================================ */
+.seating-hero {
+  padding: 7rem 1.5rem 3rem;
+  text-align: center;
+  background: linear-gradient(180deg, var(--cream) 0%, var(--white) 100%);
+  border-bottom: 1px solid var(--sage-light);
+}
+
+.seating-hero-sub {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+.seating-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 2.2rem;
+  color: var(--sage-dark);
+  margin-bottom: 0.4rem;
+}
+
+.seating-hero-hint {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.seating-search-section {
+  padding: 2.5rem 20px 5rem;
+  background: var(--white);
+  min-height: 50vh;
+}
+
+/* Search input */
+.search-wrap {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.9rem 3rem 0.9rem 1.2rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  background: var(--white);
+  border: 2px solid var(--sage-light);
+  border-radius: 50px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+.search-input:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 4px rgba(197, 184, 232, 0.18);
+}
+
+.search-icon {
+  position: absolute;
+  right: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  color: var(--text-light);
+  pointer-events: none;
+}
+
+.search-loading {
+  text-align: center;
+  color: var(--text-light);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.search-none {
+  text-align: center;
+  color: var(--text-medium);
+  font-size: 0.95rem;
+  line-height: 1.8;
+  padding: 1.5rem 0;
+}
+
+/* Seat result card */
+.seat-card {
+  background: var(--cream);
+  border: 1px solid var(--sage-light);
+  border-radius: 14px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 0.8rem;
+  transition: box-shadow 0.2s;
+}
+
+.seat-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
+
+.seat-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.3rem;
+}
+
+.seat-table {
+  font-size: 1rem;
+  color: var(--sage-dark);
+  font-weight: 400;
+}
+
+.seat-label {
+  color: var(--text-light);
+  font-size: 0.9em;
+}
+
+/* ============================================
+   Admin Dashboard  (admin.html)
+   ============================================ */
+.admin-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1.2rem;
+  background: var(--sage-dark);
+  color: var(--white);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-nav-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--white);
+}
+
+.admin-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.live-dot {
+  font-size: 0.8rem;
+  color: #bbb;
+  transition: color 0.4s;
+}
+
+.admin-signout-btn {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+  background: none;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-signout-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--white);
+}
+
+/* Tabs */
+.admin-tabs {
+  display: flex;
+  background: var(--white);
+  border-bottom: 2px solid var(--sage-light);
+  padding: 0 1rem;
+  gap: 0;
+  overflow-x: auto;
+}
+
+.admin-tab {
+  padding: 0.85rem 1.3rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-light);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.admin-tab.active {
+  color: var(--sage-dark);
+  border-bottom-color: var(--sage-dark);
+  font-weight: 700;
+}
+
+.admin-tab:hover:not(.active) {
+  color: var(--text-medium);
+}
+
+/* Panel */
+.admin-panel {
+  padding: 1.5rem 1.2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Summary cards */
+.summary-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.summary-card {
+  flex: 1;
+  min-width: 140px;
+  background: var(--white);
+  border: 1px solid var(--sage-light);
+  border-radius: 12px;
+  padding: 1.2rem 1rem;
+  text-align: center;
+}
+
+.summary-card--total {
+  background: var(--cream);
+  border-color: var(--sage);
+}
+
+.summary-card--warn {
+  background: #fff8f0;
+  border-color: #e0a060;
+}
+
+.summary-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--sage-dark);
+  line-height: 1.1;
+  margin-bottom: 0.3rem;
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Admin card (form container) */
+.admin-card {
+  background: var(--white);
+  border: 1px solid var(--sage-light);
+  border-radius: 12px;
+  padding: 1.4rem 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.admin-card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--sage-dark);
+  margin-bottom: 1rem;
+}
+
+/* Form rows in admin */
+.admin-form-row {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.admin-form-row .form-group {
+  min-width: 110px;
+}
+
+/* Toolbar (filters + export) */
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.filter-group {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.4rem 0.9rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.8rem;
+  color: var(--text-medium);
+  background: var(--white);
+  border: 1px solid var(--sage-light);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn.active {
+  background: var(--sage);
+  color: var(--white);
+  border-color: var(--sage);
+}
+
+.export-btn {
+  padding: 0.45rem 1rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.8rem;
+  color: var(--sage-dark);
+  background: var(--white);
+  border: 1px solid var(--sage);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.export-btn:hover {
+  background: var(--sage-light);
+}
+
+/* Data table */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--sage-light);
+  background: var(--white);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.data-table th {
+  background: var(--cream);
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-medium);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--sage-light);
+}
+
+.data-table td {
+  padding: 0.65rem 0.9rem;
+  border-bottom: 1px solid var(--sage-light);
+  vertical-align: middle;
+  color: var(--text-dark);
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover td {
+  background: var(--sage-light);
+}
+
+.cell-time {
+  white-space: nowrap;
+  font-size: 0.82rem;
+  color: var(--text-light);
+}
+
+.cell-name {
+  font-weight: 700;
+}
+
+/* Thank-you toggle button */
+.ty-btn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: var(--text-light);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.ty-btn.ty-sent {
+  background: #e8f5e9;
+  border-color: #81c784;
+  color: #388e3c;
+}
+
+/* Delete / Edit action buttons */
+.del-btn {
+  background: none;
+  border: none;
+  color: #c0392b;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.del-btn:hover { opacity: 1; }
+
+.edit-btn {
+  background: none;
+  border: none;
+  color: var(--sage-dark);
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0.2rem 0.4rem;
+  margin-right: 0.3rem;
+}
+
+/* Outline button (cancel edit) */
+.btn-outline {
+  padding: 0.7rem 1.4rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--sage-dark);
+  background: transparent;
+  border: 1px solid var(--sage);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-outline:hover {
+  background: var(--sage-light);
+}
+
+/* CSV import label-as-button */
+.import-label {
+  display: inline-block;
+  padding: 0.45rem 1rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.82rem;
+  color: var(--sage-dark);
+  background: var(--white);
+  border: 1px solid var(--sage);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.import-label:hover {
+  background: var(--sage-light);
+}
+
+.import-hint {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  margin-top: 0.6rem;
+  font-style: italic;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  color: var(--text-light);
+  font-style: italic;
+  padding: 2rem 1rem;
+  font-size: 0.95rem;
+}
